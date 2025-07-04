@@ -6,7 +6,7 @@ from datetime import datetime
 
 from pretrained_transfermer_model import PretrainedTransformerModel
 
-UPLOAD_DIR = "D:\\RAJKUMAR\\projects\\PYTHON_PROJECTS\\document-indexing-search\\documents"
+UPLOAD_DIR = "D:\\RAJKUMAR\\projects\\PYTHON_PROJECTS\\document-search-integration\\document-indexing-search\\documents"
 DOCUMENT_SEARCH_INDEX = "document_search_index"
 
 pretrained_transformer_model = PretrainedTransformerModel()
@@ -47,13 +47,14 @@ class DocumentIndexingService:
 
     def index_content(self, fileMetaData, file_id):
         tags = fileMetaData.tags if isinstance(fileMetaData.tags, list) else [fileMetaData.tags]
-        print("File Tags: ", ", ".join(fileMetaData.tags))
+
+        joinedTags = ", ".join(tags)
         # Prepare metadata for indexing
         document = {
             "id": file_id,
             "fileName": fileMetaData.title,
             "description": fileMetaData.description,
-            "tags": ", ".join(fileMetaData.tags),  # Join tags into a single string
+            "tags": joinedTags,  # Join tags into a single string
             "accessGroup": fileMetaData.access_group,
             "fileCategory": fileMetaData.category,
             "link": fileMetaData.link,
@@ -61,7 +62,7 @@ class DocumentIndexingService:
             "uploadDate": datetime.now(),
             "descriptionVector": pretrained_transformer_model.vector_transformer(fileMetaData.description),
             "nameVector": pretrained_transformer_model.vector_transformer(fileMetaData.title),
-            "tagVector": pretrained_transformer_model.vector_transformer(fileMetaData.tags)
+            "tagVector": pretrained_transformer_model.vector_transformer(joinedTags)
         }
 
 

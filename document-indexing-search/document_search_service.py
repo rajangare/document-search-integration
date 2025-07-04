@@ -75,6 +75,6 @@ class DocumentSearchService:
             for item in filtered_results
         ], indent=2)
 
-        print("Searched JSON: ", searchedJson)
+        #print("Searched JSON: ", searchedJson)
         # Return the JSON string of the search results
         return searchedJson
