@@ -18,25 +18,31 @@ documentMetaData = {
         "fileCategory": {
             "type": "text"
         },
+        "contact": {
+            "type": "text"
+        },
+        "link": {
+            "type": "text"
+        },
         "uploadDate": {
-            "type": "date"
+            "type": "text"
         },
         "descriptionVector": {
-            "type":"dense_vector",
+            "type": "dense_vector",
             "dims": 768,
-            "index":True,
+            "index": True,
             "similarity": "l2_norm"
         },
         "nameVector": {
-            "type":"dense_vector",
+            "type": "dense_vector",
             "dims": 768,
-            "index":True,
+            "index": True,
             "similarity": "l2_norm"
         },
         "tagVector": {
-            "type":"dense_vector",
+            "type": "dense_vector",
             "dims": 768,
-            "index":True,
+            "index": True,
             "similarity": "l2_norm"
         }
     }

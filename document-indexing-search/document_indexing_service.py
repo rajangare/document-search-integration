@@ -1,3 +1,4 @@
+import json
 import os
 import shutil
 import uuid
@@ -6,9 +7,7 @@ from datetime import datetime
 from pretrained_transfermer_model import PretrainedTransformerModel
 
 UPLOAD_DIR = "D:\\RAJKUMAR\\projects\\PYTHON_PROJECTS\\document-indexing-search\\documents"
-DOCUMENT_DESC_INDEX = "document_desc_index"
-DOCUMENT_NAME_INDEX = "document_name_index"
-DOCUMENT_TAG_INDEX = "document_tag_index"
+DOCUMENT_SEARCH_INDEX = "document_search_index"
 
 pretrained_transformer_model = PretrainedTransformerModel()
 
@@ -47,37 +46,28 @@ class DocumentIndexingService:
         return file_id
 
     def index_content(self, fileMetaData, file_id):
+        tags = fileMetaData.tags if isinstance(fileMetaData.tags, list) else [fileMetaData.tags]
+        print("File Tags: ", ", ".join(fileMetaData.tags))
         # Prepare metadata for indexing
         document = {
             "id": file_id,
             "fileName": fileMetaData.title,
             "description": fileMetaData.description,
-            "tags": fileMetaData.tags,
+            "tags": ", ".join(fileMetaData.tags),  # Join tags into a single string
             "accessGroup": fileMetaData.access_group,
             "fileCategory": fileMetaData.category,
+            "link": fileMetaData.link,
+            "contact": fileMetaData.contact,
             "uploadDate": datetime.now(),
             "descriptionVector": pretrained_transformer_model.vector_transformer(fileMetaData.description),
             "nameVector": pretrained_transformer_model.vector_transformer(fileMetaData.title),
             "tagVector": pretrained_transformer_model.vector_transformer(fileMetaData.tags)
         }
 
-        # Index the DOCUMENT_DESC_INDEX in Elasticsearch
-        self.elasticsearch.index(
-            index=DOCUMENT_DESC_INDEX,  # Replace with your actual index name if different
-            id=file_id,
-            document=document
-        )
 
-        # Index the DOCUMENT_NAME_INDEX in Elasticsearch
+        # Index the DOCUMENT_SEARCH_INDEX in Elasticsearch
         self.elasticsearch.index(
-            index=DOCUMENT_NAME_INDEX,  # Replace with your actual index name if different
-            id=file_id,
-            document=document
-        )
-
-        # Index the DOCUMENT_TAG_INDEX in Elasticsearch
-        self.elasticsearch.index(
-            index=DOCUMENT_TAG_INDEX,  # Replace with your actual index name if different
+            index=DOCUMENT_SEARCH_INDEX,  # Replace it with your actual index name if different
             id=file_id,
             document=document
         )
@@ -103,3 +93,51 @@ class DocumentIndexingService:
 
         # Extract and return the source of each hit
         return [hit["_source"] for hit in hits]
+
+    def load_data_documents(self, json_file):
+        index_name = DOCUMENT_SEARCH_INDEX
+
+        if not self.elasticsearch.indices.exists(index=index_name):
+            self.create_index(index_name)
+
+        with open(json_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        for record in data:
+            # Prepare metadata for indexing
+            file_id = record["id"]
+            documents = {
+                "id": file_id,
+                "fileName": record["fileName"],
+                "description": record["description"],
+                "tags": record["tags"],
+                "accessGroup": record["accessGroup"],
+                "fileCategory": record["fileCategory"],
+                "link": record["link"],
+                "contact": record["contact"],
+                "uploadDate": record["uploadDate"],
+                "descriptionVector":  record["descriptionVector"],
+                "nameVector": record["nameVector"],
+                "tagVector": record["tagVector"]
+            }
+
+            # Index the DOCUMENT_SEARCH_INDEX in Elasticsearch
+            self.elasticsearch.index(
+                index=DOCUMENT_SEARCH_INDEX,  # Replace with your actual index name if different
+                id=file_id,
+                document=documents
+            )
+        print(f"Data loaded into index '{index_name}' from {json_file}")
+        res = self.elasticsearch.count(index=index_name)
+        print(f"Total documents in index '{index_name}': {res['count']}")
+
+        return res['count']
+
+    def count_by_indexame(self, index_name):
+        if not self.elasticsearch.indices.exists(index=index_name):
+            print(f"Index '{index_name}' does not exist.")
+            return 0
+
+        res = self.elasticsearch.count(index=index_name)
+        print(f"Total documents in index '{index_name}': {res['count']}")
+        return res['count']

@@ -1,18 +1,18 @@
 from elastic_connection import get_elasticsearch_client
 from tag_index_mapping import tagIndexMapping
+import json
 
-TAG_INDEX_NAME = "tag_index"
+TAG_INDEX_NAME = "tag_search_index"
 UNDEFINED_TAG_INDEX_NAME = "undefined_tag_index"
 
 class TagIndexing:
-    global elasticInstance
 
     def __init__(self, elasticInstance):
         self.elasticInstance = elasticInstance
 
     def create_index(self, index_name):
-        if not elasticInstance.indices.exists(index=index_name):
-            elasticInstance.indices.create(index=index_name, mappings=tagIndexMapping)
+        if not self.elasticInstance.indices.exists(index=index_name):
+            self.elasticInstance.indices.create(index=index_name, mappings=tagIndexMapping)
             print(f"Index '{index_name}' created.")
         else:
             print(f"Index '{index_name}' already exists.")
@@ -58,36 +58,8 @@ class TagIndexing:
                 "IndexName": index_name,
                 "TagName": tag_name
             }
-            self.elasticInstance.index(index=index_name, document=tagDocument)
+            self.elasticInstance.index(index=index_name, document=tagDocument, id=tag_name)
             print(f"Tag '{tag_name}' added to index '{index_name}'.")
-        else:
-            print(f"Index '{index_name}' does not exist. Please create it first.")
-
-
-
-
-
-    def rename_tag_in_index(self, index_name, old_tag_name, new_tag_name):
-        if self.elasticInstance.indices.exists(index=index_name):
-            tagQuery = {
-                "match": {
-                    "TagName": old_tag_name
-                }
-            }
-
-            # Check if the old tag exists in the index
-            result = self.elasticInstance.search(index=index_name, query=tagQuery)
-            if result['hits']['total']['value'] > 0:
-                for hit in result['hits']['hits']:
-                    doc_id = hit['_id']
-                    updated_document = {
-                        "IndexName": index_name,
-                        "TagName": new_tag_name
-                    }
-                    self.elasticInstance.update(index=index_name, id=doc_id, doc=updated_document)
-                print(f"Tag '{old_tag_name}' renamed to '{new_tag_name}' in index '{index_name}'.")
-            else:
-                print(f"Tag '{old_tag_name}' does not exist in index '{index_name}'.")
         else:
             print(f"Index '{index_name}' does not exist. Please create it first.")
 
@@ -185,36 +157,72 @@ class TagIndexing:
 
     def get_all_tags(self):
         index_name = TAG_INDEX_NAME
-        if self.elasticInstance.indices.exists(index=index_name):
-            result = self.elasticInstance.search(index=index_name, query={"match_all": {}})
-            tags = [hit['_source']['TagName'] for hit in result['hits']['hits']]
-            print(f"Tags in index '{index_name}': {tags}")
-            return tags
-        else:
-            print(f"Index '{index_name}' does not exist.")
-            return []
+        all_docs = []
+        page = self.elasticInstance.search(
+            index=index_name,
+            scroll='2m',
+            body={
+                "query": {"match_all": {}},
+                "size": 1000
+            }
+        )
+        sid = page['_scroll_id']
+        scroll_size = len(page['hits']['hits'])
+        all_docs.extend([hit['_source'] for hit in page['hits']['hits']])
+
+        while scroll_size > 0:
+            page = self.elasticInstance.scroll(scroll_id=sid, scroll='2m')
+            sid = page['_scroll_id']
+            scroll_size = len(page['hits']['hits'])
+            all_docs.extend([hit['_source'] for hit in page['hits']['hits']])
+
+        print(f"Total documents fetched: {len(all_docs)}")
+        return [doc['TagName'] for doc in all_docs if 'TagName' in doc]
+
+
+    def load_tag_documents(self, json_file):
+        index_name = TAG_INDEX_NAME
+        if not self.elasticInstance.indices.exists(index=index_name):
+            self.create_index(index_name)
+
+        with open(json_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        for record in data:
+            self.add_tag_to_index(record["IndexName"], record["TagName"])
+
+        all_docs = []
+        page = self.elasticInstance.search(
+            index=index_name,
+            scroll='2m',
+            body={
+                "query": {"match_all": {}},
+                "size": 1000
+            }
+        )
+        sid = page['_scroll_id']
+        scroll_size = len(page['hits']['hits'])
+        all_docs.extend([hit['_source'] for hit in page['hits']['hits']])
+
+        while scroll_size > 0:
+            page = self.elasticInstance.scroll(scroll_id=sid, scroll='2m')
+            sid = page['_scroll_id']
+            scroll_size = len(page['hits']['hits'])
+            all_docs.extend([hit['_source'] for hit in page['hits']['hits']])
+
+        print(f"Total documents fetched: {len(all_docs)}")
+        return all_docs
+
 
 
 if __name__ == "__main__":
     elasticInstance = get_elasticsearch_client()
     tag_indexing = TagIndexing(elasticInstance)
     tag_indexing.create_index(TAG_INDEX_NAME)
-    tag_indexing.get_or_create_index_for_tag("Python_Programming")
 
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Python_Programming")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Data_Science")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Machine_Learning")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Artificial_Intelligence")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Deep_Learning")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Natural_Language_Processing")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Computer_Vision")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Big_Data")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Cloud_Computing")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Data_Analytics")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Java_Programming")
-    tag_indexing.add_tag_to_index(TAG_INDEX_NAME, "Spring and Spring Boot")
+    tag_indexing.load_tag_documents("tagSample.json")
 
-
+    tag_indexing.get_tags_by_index(TAG_INDEX_NAME)
 
     #tag_indexing.add_tag_to_index("test_index", "tag1")
     #tag_indexing.add_tag_to_index("test_index", "tag2 akash")
