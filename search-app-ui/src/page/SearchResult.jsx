@@ -1,5 +1,5 @@
 import { Button, Card, Input, Tabs, Typography, Tag, Pagination } from "antd";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import UploadModal from "./UploadModal";
@@ -20,6 +20,31 @@ function SearchResult() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
+  const recognitionRef = useRef(null);
+  // Voice input handler (same as SearchPage)
+  const handleVoiceInput = () => {
+    if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+      alert('Speech recognition is not supported in this browser.');
+      return;
+    }
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!recognitionRef.current) {
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.lang = 'en-US';
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.maxAlternatives = 1;
+    }
+    const recognition = recognitionRef.current;
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      setSearchText(transcript);
+      fetchSearchResults(transcript);
+    };
+    recognition.onerror = (event) => {
+      alert('Voice input error: ' + event.error);
+    };
+    recognition.start();
+  };
 
   const tagColors = {
     Doc: "purple",
@@ -218,26 +243,53 @@ function SearchResult() {
               allowClear
             />
             <button
-              onClick={() => handleSearch(searchText)}
+              onClick={handleVoiceInput}
+              title="Voice Search"
               style={{
-                marginLeft: -2,
+                marginLeft: 6,
                 fontWeight: 700,
                 fontSize: 18,
-                height: 44,
+                height: 40,
+                minWidth: 40,
+                background: 'linear-gradient(90deg, #ffe066 0%, #38cfa6 100%)',
+                border: 'none',
+                boxShadow: '0 2px 8px rgba(56,207,166,0.10)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '0 10px',
+                borderRadius: 20,
+                color: '#4f8cff',
+                cursor: 'pointer',
+                transition: 'background 0.2s',
+                fontFamily: 'Segoe UI, Arial, sans-serif'
+              }}
+            >
+              <span role="img" aria-label="mic" style={{ fontSize: 28 }}>🎤</span>
+            </button>
+            <button
+              onClick={() => handleSearch(searchText)}
+              style={{
+                marginLeft: 6,
+                fontWeight: 700,
+                fontSize: 18,
+                height: 40,
+                minWidth: 40,
                 background: 'linear-gradient(90deg, #4f8cff 0%, #38cfa6 100%)',
                 border: 'none',
                 boxShadow: '0 2px 8px rgba(56,207,166,0.10)',
                 display: 'flex',
                 alignItems: 'center',
-                padding: '0 28px',
-                borderRadius: 22,
+                justifyContent: 'center',
+                padding: '0 16px',
+                borderRadius: 20,
                 color: '#fff',
                 cursor: 'pointer',
                 transition: 'background 0.2s',
                 fontFamily: 'Segoe UI, Arial, sans-serif'
               }}
             >
-              <span role="img" aria-label="search" style={{ marginRight: 8, fontSize: 20 }}>🔍</span>
+              <span role="img" aria-label="search" style={{ fontSize: 28, marginRight: 8 }}>🔍</span>
               <span style={{ fontWeight: 700, letterSpacing: 1 }}>Search</span>
             </button>
           </div>
