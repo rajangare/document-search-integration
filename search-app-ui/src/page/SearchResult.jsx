@@ -278,11 +278,11 @@ function SearchResult() {
             {paginatedData.map((item, idx) => {
               const index = (currentPage - 1) * pageSize + idx;
               const words = (item.description || '').trim().split(/\s+/);
-              const isLong = words.length > 10;
+              const isLong = words.length > 15;
               const expanded = expandedStates[index] || false;
               const displayedDescription =
                 isLong && !expanded
-                  ? words.slice(0, 10).join(" ") + "..."
+                  ? words.slice(0, 15).join(" ") + "..."
                   : item.description;
 
               return (
