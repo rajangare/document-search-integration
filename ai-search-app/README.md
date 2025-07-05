@@ -1,8 +1,8 @@
-# SCB Search Engine UI (`search-app-ui`)
+# SCB Search Engine UI (`ai-search-app`)
 
 ## Overview
 
-`search-app-ui` is a modern React-based web application for the SCB Search Engine, designed to help users search, discover, and upload documents, applications, links, and projects. The UI is clean, responsive, and leverages Ant Design for a professional look and feel. It integrates with a backend API to provide semantic search, document upload, and tag management features.
+`ai-search-app` is a modern React-based web application for the SCB Search Engine, designed to help users search, discover, and upload documents, applications, links, and projects. The UI is clean, responsive, and leverages Ant Design for a professional look and feel. It integrates with a backend API to provide semantic search, document upload, and tag management features.
 
 ## Features
 
@@ -18,7 +18,7 @@
 ## Folder Structure
 
 ```
-search-app-ui/
+ai-search-app/
 ├── public/
 │   ├── favicon.ico
 │   ├── index.html
@@ -57,7 +57,7 @@ search-app-ui/
 1. Clone the repository:
    ```sh
    git clone <repo-url>
-   cd search-app-ui
+   cd ai-search-app
    ```
 2. Install dependencies:
    ```sh

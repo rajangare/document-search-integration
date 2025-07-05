@@ -1,4 +1,4 @@
-# Document Indexing Search
+# Document AI Indexing Search
 
 A Python-based API for managing document indexing and semantic search using Elasticsearch and FastAPI. This project enables uploading, indexing, searching, and downloading documents with metadata, as well as managing access groups.
 
@@ -67,8 +67,8 @@ A Python-based API for managing document indexing and semantic search using Elas
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/<user>/document-indexing-search.git
-   cd document-indexing-search
+   git clone https://github.com/<user>/ai-indexing-search.git
+   cd ai-indexing-search
 
 
 ## Installation
