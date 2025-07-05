@@ -14,7 +14,7 @@ function SearchPage() {
   };
 
   return (
-    <div>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Header with logo, title, badge, and tagline */}
       <div style={{
         width: '100vw',
@@ -151,6 +151,22 @@ function SearchPage() {
           </button>
         </div>
       </div>
+      {/* Footer */}
+      <footer style={{
+        width: '100%',
+        background: 'linear-gradient(90deg, #e3eefd 0%, #f8fbff 100%)',
+        color: '#4f8cff',
+        textAlign: 'center',
+        padding: '18px 0 10px 0',
+        fontWeight: 500,
+        fontSize: 16,
+        letterSpacing: 0.5,
+        borderTop: '1.5px solid #e3eefd',
+        marginTop: 'auto',
+        boxShadow: '0 -2px 12px rgba(79,140,255,0.05)'
+      }}>
+        © {new Date().getFullYear()} SCB Search Engine &nbsp;|&nbsp; Powered by AI &nbsp;|&nbsp; <a href="https://www.scb.com" target="_blank" rel="noopener noreferrer" style={{ color: '#38cfa6', textDecoration: 'none', fontWeight: 700 }}>SCB</a>
+      </footer>
     </div>
   );
 }

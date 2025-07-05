@@ -263,74 +263,84 @@ function SearchResult() {
       <div style={{ padding: '20px', position: 'relative' }}>
         <Tabs defaultActiveKey="1" centered>
         <TabPane tab="All" key="1">
-          {loading && <div>Loading...</div>}
-          {error && <div style={{ color: 'red' }}>Error: {error}</div>}
-          {!loading && !error && data.length === 0 && <div>No results found.</div>}
-          {paginatedData.map((item, idx) => {
-            const index = (currentPage - 1) * pageSize + idx;
-            const words = (item.description || '').trim().split(/\s+/);
-            const isLong = words.length > 10;
-            const expanded = expandedStates[index] || false;
-            const displayedDescription =
-              isLong && !expanded
-                ? words.slice(0, 10).join(" ") + "..."
-                : item.description;
+          <div style={{
+            background: '#f8fbff',
+            borderRadius: 18,
+            boxShadow: '0 4px 24px rgba(79,140,255,0.10)',
+            border: '1.5px solid #e3eefd',
+            padding: '32px 32px 24px 32px',
+            marginBottom: 32,
+            minHeight: 200,
+          }}>
+            {loading && <div>Loading...</div>}
+            {error && <div style={{ color: 'red' }}>Error: {error}</div>}
+            {!loading && !error && data.length === 0 && <div>No results found.</div>}
+            {paginatedData.map((item, idx) => {
+              const index = (currentPage - 1) * pageSize + idx;
+              const words = (item.description || '').trim().split(/\s+/);
+              const isLong = words.length > 10;
+              const expanded = expandedStates[index] || false;
+              const displayedDescription =
+                isLong && !expanded
+                  ? words.slice(0, 10).join(" ") + "..."
+                  : item.description;
 
-            return (
-              <Card key={index} style={{ marginBottom: "20px" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
-                >
-                  <Title level={5} style={{ margin: 0 }}>
-                    {item.name}
-                  </Title>
-                  <Tag color={tagColors[item.category] || "default"}>
-                    {item.category?.toUpperCase?.() || ''}
-                  </Tag>
-                </div>
+              return (
+                <Card key={index} style={{ marginBottom: "20px", borderRadius: 14, boxShadow: '0 2px 12px rgba(79,140,255,0.07)', border: '1.5px solid #dbeafe' }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Title level={5} style={{ margin: 0 }}>
+                      {item.name}
+                    </Title>
+                    <Tag color={tagColors[item.category] || "default"}>
+                      {item.category?.toUpperCase?.() || ''}
+                    </Tag>
+                  </div>
 
-                <Paragraph style={{ marginTop: 8 }}>
-                  {displayedDescription}
-                  {isLong && (
-                    <span
-                      onClick={() => toggleExpanded(index)}
-                      style={{
-                        color: "#1890ff",
-                        cursor: "pointer",
-                        marginLeft: 8,
-                      }}
-                    >
-                      {expanded ? "Show less" : "Read more"}
-                    </span>
-                  )}
-                </Paragraph>
+                  <Paragraph style={{ marginTop: 8 }}>
+                    {displayedDescription}
+                    {isLong && (
+                      <span
+                        onClick={() => toggleExpanded(index)}
+                        style={{
+                          color: "#1890ff",
+                          cursor: "pointer",
+                          marginLeft: 8,
+                        }}
+                      >
+                        {expanded ? "Show less" : "Read more"}
+                      </span>
+                    )}
+                  </Paragraph>
 
-                <Paragraph>
-                  <AntLink href={item.Link} target="_blank">
-                    {item.Link}
-                  </AntLink>
-                  <br />
-                  Contact: {item.contact || 'N/A'}
-                </Paragraph>
-              </Card>
-            );
-          })}
-          {!loading && !error && data.length > pageSize && (
-            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
-              <Pagination
-                current={currentPage}
-                pageSize={pageSize}
-                total={data.length}
-                onChange={handlePageChange}
-                showSizeChanger={false}
-                showQuickJumper={false}
-              />
-            </div>
-          )}
+                  <Paragraph>
+                    <AntLink href={item.Link} target="_blank">
+                      {item.Link}
+                    </AntLink>
+                    <br />
+                    Contact: {item.contact || 'N/A'}
+                  </Paragraph>
+                </Card>
+              );
+            })}
+            {!loading && !error && data.length > pageSize && (
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
+                <Pagination
+                  current={currentPage}
+                  pageSize={pageSize}
+                  total={data.length}
+                  onChange={handlePageChange}
+                  showSizeChanger={false}
+                  showQuickJumper={false}
+                />
+              </div>
+            )}
+          </div>
         </TabPane>
         <TabPane tab="Doc" key="2">
         </TabPane>
@@ -343,6 +353,22 @@ function SearchResult() {
       </Tabs>
         <UploadModal></UploadModal>
       </div>
+      {/* Footer */}
+      <footer style={{
+        width: '100%',
+        background: 'linear-gradient(90deg, #e3eefd 0%, #f8fbff 100%)',
+        color: '#4f8cff',
+        textAlign: 'center',
+        padding: '18px 0 10px 0',
+        fontWeight: 500,
+        fontSize: 16,
+        letterSpacing: 0.5,
+        borderTop: '1.5px solid #e3eefd',
+        marginTop: 40,
+        boxShadow: '0 -2px 12px rgba(79,140,255,0.05)'
+      }}>
+        © {new Date().getFullYear()} SCB Search Engine &nbsp;|&nbsp; Powered by AI &nbsp;|&nbsp; <a href="https://www.scb.com" target="_blank" rel="noopener noreferrer" style={{ color: '#38cfa6', textDecoration: 'none', fontWeight: 700 }}>SCB</a>
+      </footer>
     </div>
   );
 }
