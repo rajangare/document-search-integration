@@ -28,12 +28,12 @@ function SearchResult() {
     Project: "orange",
   };
 
-  // Fetch data when searchText changes
-  useEffect(() => {
-    if (!searchText) return;
+  // Fetch data only when search is triggered
+  const fetchSearchResults = (query) => {
+    if (!query) return;
     setLoading(true);
     setError(null);
-    fetch(`http://localhost:8000/search_document/?semantic_search_query=${encodeURIComponent(searchText)}`)
+    fetch(`http://localhost:8000/search_document/?semantic_search_query=${encodeURIComponent(query)}`)
       .then(res => {
         if (!res.ok) throw new Error('Network error');
         return res.json();
@@ -43,7 +43,15 @@ function SearchResult() {
       })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
-  }, [searchText]);
+  };
+
+  // Only fetch on initial mount if there is initialSearchText
+  useEffect(() => {
+    if (initialSearchText) {
+      fetchSearchResults(initialSearchText);
+    }
+    // eslint-disable-next-line
+  }, []);
 
   const onClick = () => {
     dispatch(searchPageActions.openModal());
@@ -61,6 +69,7 @@ function SearchResult() {
   // Handler for search box
   const handleSearch = (value) => {
     setSearchText(value);
+    fetchSearchResults(value);
   };
 
   // Pagination logic

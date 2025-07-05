@@ -9,6 +9,7 @@ function SearchPage() {
   const navigate = useNavigate();
 
   const onClick = () => {
+    if (!value.trim()) return;
     navigate('/result', { state: { searchText: value } });
   };
 
