@@ -130,7 +130,7 @@ def get_data_by_indexname(index_name: str = Query(..., description="Name of the 
 @app.get("/load_tags/")
 def load_tags():
     try:
-        data = tag_indexing.load_tag_documents("tagSample.json")
+        data = tag_indexing.load_tag_documents("sample_tags.json")
         return {"data": document_indexing_service.get_data_by_indexname(TAG_INDEX_NAME)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -144,6 +144,11 @@ def load_documents():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/load_sample_documents_more_than_100/")
+def load_documents():
+        document_indexing_service.load_data("sample_document_json.json")
+        return {"load_count": document_indexing_service.count_by_indexame(DOCUMENT_SEARCH_INDEX)}
+
 
 @app.get("/count_by_indexname/")
 def count_by_indexname(index_name: str = Query(..., description="Name of the Elasticsearch index")):
@@ -152,3 +157,4 @@ def count_by_indexname(index_name: str = Query(..., description="Name of the Ela
         return {"count": count}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

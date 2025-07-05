@@ -87,12 +87,14 @@ function UploadModal() {
     }
   };
 
-    const categoryList=[
-    "Doc",
-    "Application",
-    "Project",
-    "Link"
-  ]
+    const categoryList=[      
+      "DOC",
+      "PDF",
+      "Excel",
+      "Link",
+      "Project",      
+      "Application"
+    ];
 
 
    useEffect(() => {

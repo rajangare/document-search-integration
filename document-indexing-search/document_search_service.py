@@ -5,6 +5,7 @@ from pretrained_transfermer_model import PretrainedTransformerModel
 
 pretrained_transformer_model = PretrainedTransformerModel()
 
+
 class DocumentSearchService:
 
     def __init__(self, elasticsearch):
@@ -19,32 +20,41 @@ class DocumentSearchService:
             "knn": {
                 "field": "descriptionVector",
                 "query_vector": vector_of_input_keyword,
-                "k": 5,
+                "k": 50,
                 "num_candidates": 500
-            }
+            },
+            "size": 50
         }
         queryName = {
             "knn": {
                 "field": "nameVector",
                 "query_vector": vector_of_input_keyword,
-                "k": 2,
+                "k": 20,
                 "num_candidates": 500
-            }
+            },
+            "size": 50
         }
         queryTags = {
             "knn": {
                 "field": "tagVector",
                 "query_vector": vector_of_input_keyword,
-                "k": 3,
+                "k": 30,
                 "num_candidates": 500
-            }
+            },
+            "size": 50
         }
 
         source_fields = ["fileName", "description", "accessGroup", "id", "fileCategory", "tags", "contact", "link"]
 
-        resDescr = self.elasticsearch.search(index=DOCUMENT_SEARCH_INDEX, body=queryDescr, source=["fileName", "description", "accessGroup", "id", "fileCategory", "tags", "contact", "link"])
-        resName = self.elasticsearch.search(index=DOCUMENT_SEARCH_INDEX, body=queryName, source=["fileName", "description", "accessGroup", "id", "fileCategory", "tags", "contact", "link"])
-        resTag = self.elasticsearch.search(index=DOCUMENT_SEARCH_INDEX, body=queryTags, source=["fileName", "description", "accessGroup", "id", "fileCategory", "tags", "contact", "link"])
+        resDescr = self.elasticsearch.search(index=DOCUMENT_SEARCH_INDEX, body=queryDescr,
+                                             source=["fileName", "description", "accessGroup", "id", "fileCategory",
+                                                     "tags", "contact", "link"])
+        resName = self.elasticsearch.search(index=DOCUMENT_SEARCH_INDEX, body=queryName,
+                                            source=["fileName", "description", "accessGroup", "id", "fileCategory",
+                                                    "tags", "contact", "link"])
+        resTag = self.elasticsearch.search(index=DOCUMENT_SEARCH_INDEX, body=queryTags,
+                                           source=["fileName", "description", "accessGroup", "id", "fileCategory",
+                                                   "tags", "contact", "link"])
 
         all_hits = resDescr["hits"]["hits"] + resName["hits"]["hits"] + resTag["hits"]["hits"]
 
@@ -61,6 +71,8 @@ class DocumentSearchService:
             for hit in sorted_results
         ]
 
+        # print("filtered_results: ", filtered_results)
+
         searchedJson = json.dumps([
             {
                 "name": item.get("fileName") if item.get("fileName") is not None else "N/A",
@@ -75,6 +87,6 @@ class DocumentSearchService:
             for item in filtered_results
         ], indent=2)
 
-        #print("Searched JSON: ", searchedJson)
+        # print("Searched JSON: ", searchedJson)
         # Return the JSON string of the search results
         return searchedJson

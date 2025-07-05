@@ -1,4 +1,4 @@
-import { Button, Card, Input, Tabs, Typography, Tag } from "antd";
+import { Button, Card, Input, Tabs, Typography, Tag, Pagination } from "antd";
 import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -15,6 +15,8 @@ function SearchResult() {
   const initialSearchText = location.state?.searchText || "";
   const [searchText, setSearchText] = useState(initialSearchText);
   const [data, setData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
@@ -60,6 +62,19 @@ function SearchResult() {
   const handleSearch = (value) => {
     setSearchText(value);
   };
+
+  // Pagination logic
+  const paginatedData = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Reset to page 1 when data/search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [data, searchText]);
 
   return (
     <div>
@@ -242,7 +257,8 @@ function SearchResult() {
           {loading && <div>Loading...</div>}
           {error && <div style={{ color: 'red' }}>Error: {error}</div>}
           {!loading && !error && data.length === 0 && <div>No results found.</div>}
-          {data.map((item, index) => {
+          {paginatedData.map((item, idx) => {
+            const index = (currentPage - 1) * pageSize + idx;
             const words = (item.description || '').trim().split(/\s+/);
             const isLong = words.length > 10;
             const expanded = expandedStates[index] || false;
@@ -294,6 +310,18 @@ function SearchResult() {
               </Card>
             );
           })}
+          {!loading && !error && data.length > pageSize && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
+              <Pagination
+                current={currentPage}
+                pageSize={pageSize}
+                total={data.length}
+                onChange={handlePageChange}
+                showSizeChanger={false}
+                showQuickJumper={false}
+              />
+            </div>
+          )}
         </TabPane>
         <TabPane tab="Doc" key="2">
         </TabPane>

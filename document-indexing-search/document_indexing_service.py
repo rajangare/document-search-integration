@@ -142,3 +142,40 @@ class DocumentIndexingService:
         res = self.elasticsearch.count(index=index_name)
         print(f"Total documents in index '{index_name}': {res['count']}")
         return res['count']
+
+    def load_data(self, json_file):
+        index_name = DOCUMENT_SEARCH_INDEX
+
+        if not self.elasticsearch.indices.exists(index=index_name):
+            self.create_index(index_name)
+        else:
+            self.elasticsearch.indices.delete(index=index_name)
+            self.create_index(index_name)
+
+
+        with open(json_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+
+        class FileMetaData:
+            def __init__(self, title, description, tags, access_group, category, link, contact):
+                self.title = title
+                self.description = description
+                self.tags = tags
+                self.access_group = access_group
+                self.category = category
+                self.link = link
+                self.contact = contact
+
+        for record in data:
+            file_id = record["id"]
+            fileMetaData = FileMetaData(
+                title=record["fileName"],
+                description=record["description"],
+                tags=record["tags"],
+                access_group=record["accessGroup"],
+                category=record["fileCategory"],
+                link=record["link"],
+                contact=record["contact"]
+            )
+            print("Processing file with ID: ", file_id)
+            self.index_content(fileMetaData, file_id)
