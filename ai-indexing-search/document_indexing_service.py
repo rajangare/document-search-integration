@@ -6,7 +6,7 @@ from datetime import datetime
 
 from pretrained_transfermer_model import PretrainedTransformerModel
 
-UPLOAD_DIR = "D:\\RAJKUMAR\\projects\\PYTHON_PROJECTS\\document-search-integration\\document-indexing-search\\documents"
+UPLOAD_DIR = "D:\\RAJKUMAR\\projects\\PYTHON_PROJECTS\\document-search-integration\\ai-indexing-search\\documents"
 DOCUMENT_SEARCH_INDEX = "document_search_index"
 
 pretrained_transformer_model = PretrainedTransformerModel()

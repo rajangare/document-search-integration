@@ -101,3 +101,16 @@ http://127.0.0.1:8000/search_tags/?search_string=your_query
 
 4. You can also view the interactive SWAGGER docs at:
 http://127.0.0.1:8000/docs
+
+New Setup Instructions:
+1. Clone the repository
+2. Install dependencies
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Change the document UPLOAD_DIR path in `document_indexing_service.py` to your desired path:
+   ```python
+   UPLOAD_DIR = '/path/to/your/documents'
+   ```
+4. Start the API server:
+5. On UI project ai-search-app change the API context URL.
