@@ -1,70 +1,110 @@
-# Getting Started with Create React App
+# SCB Search Engine UI (`search-app-ui`)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
 
-## Available Scripts
+`search-app-ui` is a modern React-based web application for the SCB Search Engine, designed to help users search, discover, and upload documents, applications, links, and projects. The UI is clean, responsive, and leverages Ant Design for a professional look and feel. It integrates with a backend API to provide semantic search, document upload, and tag management features.
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- **Semantic Search:** Search for documents, applications, links, and projects using natural language queries.
+- **Modern UI/UX:** Beautiful, responsive interface with a custom header, boxed search results, and a persistent footer.
+- **Upload Modal:** Upload files or links with metadata (title, description, tags, category, access group, contact).
+- **Tag Suggestions:** Dynamic tag suggestions fetched from the backend.
+- **Pagination:** Fancy, colored pagination for easy navigation of large result sets.
+- **Category Filtering:** Tabs for All, Doc, Application, Link, and Project (future enhancement: filter by tab).
+- **Expandable Descriptions:** Long descriptions are truncated with a "Read more" link after 15 words.
+- **Persistent Footer:** Footer always stays at the bottom of the page.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Folder Structure
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+search-app-ui/
+├── public/
+│   ├── favicon.ico
+│   ├── index.html
+│   └── ...
+├── src/
+│   ├── App.jsx
+│   ├── App.css
+│   ├── index.js
+│   ├── data/
+│   │   ├── configureStore.js
+│   │   ├── rootReducer.js
+│   │   ├── rootSaga.js
+│   │   └── searching/
+│   │       ├── index.js
+│   │       ├── saga.js
+│   │       └── slice.js
+│   ├── page/
+│   │   ├── SearchPage.jsx
+│   │   ├── SearchResult.jsx
+│   │   ├── UploadModal.jsx
+│   │   └── sample_document_json.json
+│   └── util/
+│       └── httpservices.js
+├── package.json
+├── README.md
+└── ...
+```
 
-### `npm test`
+## Getting Started
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Prerequisites
+- Node.js (v16 or above recommended)
+- npm or yarn
 
-### `npm run build`
+### Installation
+1. Clone the repository:
+   ```sh
+   git clone <repo-url>
+   cd search-app-ui
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   # or
+   yarn install
+   ```
+3. Start the development server:
+   ```sh
+   npm start
+   # or
+   yarn start
+   ```
+4. The app will be available at `http://localhost:3000` by default.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Backend API
+- The UI expects a backend API running at `http://localhost:8000` (configurable via `API_BASE_URL` in the code).
+- Key endpoints:
+  - `GET /search_document/?semantic_search_query=...` — Search documents
+  - `POST /upload/` — Upload files or links
+  - `GET /all_tags/` — Fetch tag suggestions
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Usage
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. **Search:** Enter a query in the search box and press Enter or click Search. Results are shown in boxed cards with pagination.
+2. **Upload:** Click the Upload button to open the modal. Choose File or Link, fill in details, and submit.
+3. **Tags:** Add tags manually or select from suggestions.
+4. **Pagination:** Navigate through results using the colored pagination controls.
+5. **Read More:** Click "Read more" to expand long descriptions.
 
-### `npm run eject`
+## Customization
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- To change the API base URL, update the `API_BASE_URL` variable in the relevant files (e.g., `UploadModal.jsx`, `SearchResult.jsx`).
+- To add more categories, update the `categoryList` in `UploadModal.jsx` and `tagColors` in `SearchResult.jsx`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Technologies Used
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- React 18+
+- Ant Design (antd)
+- Redux Toolkit (for state management)
+- React Router DOM
+- Axios
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Contributing
 
-## Learn More
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## License
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is licensed under the MIT License.
