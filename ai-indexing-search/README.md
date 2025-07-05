@@ -79,6 +79,10 @@ pip install elasticsearch
 
 Start API server:
 uvicorn main:app --reload
+
+OR 
+```bash
+python -m uvicorn main:app --reload
 ```
 
 ## Running the `main` API Locally
