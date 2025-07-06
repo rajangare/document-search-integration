@@ -3081,7 +3081,7 @@
   },
   {
     "fileName": "AI_Factory_Link_21",
-    "description": "This confluence page will provide detail on how to access AI Factory",
+    "description": "This confluence page will provide detail on  AI Factory",
     "tags": "CLOUD,AI,SERVICE",
     "accessGroup": "private",
     "fileCategory": "Link",
@@ -3122,8 +3122,8 @@
     "tagVector": ""
   },
   {
-    "fileName": "AI_Factory_Link_24",
-    "description": "This confluence page will provide detail on how to access AI Factory",
+    "fileName": "AI_Factory_Platform_Access_Instructions",
+    "description": "You’ll find comprehensive instructions on this Confluence page for accessing the AI Factory platform",
     "tags": "NLP,CHATBOT,LLM",
     "accessGroup": "private",
     "fileCategory": "Link",
@@ -3234,8 +3234,8 @@
     "tagVector": ""
   },
   {
-    "fileName": "AI_Factory_Link_32",
-    "description": "This confluence page will provide detail on how to access AI Factory",
+    "fileName": "AI_Factory_Environment_Connection_Guide",
+    "description": "Refer to this Confluence page for detailed guidance on connecting to the AI Factory environment",
     "tags": "NLP,CHATBOT,LLM",
     "accessGroup": "public",
     "fileCategory": "Link",
@@ -3276,8 +3276,8 @@
     "tagVector": ""
   },
   {
-    "fileName": "AI_Factory_Link_35",
-    "description": "This confluence page will provide detail on how to access AI Factory",
+    "fileName": "AI_Factory_Access_Procedures",
+    "description": "Access procedures for AI Factory are explained thoroughly on this Confluence page.",
     "tags": "NLP,CHATBOT,LLM",
     "accessGroup": "internal",
     "fileCategory": "Link",
@@ -3318,8 +3318,8 @@
     "tagVector": ""
   },
   {
-    "fileName": "AI_Factory_Link_38",
-    "description": "This confluence page will provide detail on how to access AI Factory",
+    "fileName": "AI_Factory_Data_Access_Guide",
+    "description": "This page serves as your go-to guide for initiating access to AI Factory capabilities",
     "tags": "ML,DATA,MODEL",
     "accessGroup": "private",
     "fileCategory": "Link",
@@ -3430,8 +3430,8 @@
     "tagVector": ""
   },
   {
-    "fileName": "AI_Factory_Link_46",
-    "description": "This confluence page will provide detail on how to access AI Factory",
+    "fileName": "Confluence_AI_Factory_Access",
+    "description": "This confluence page will provide detail on access AI Factory",
     "tags": "DATA,ANALYTICS,INSIGHT",
     "accessGroup": "public",
     "fileCategory": "Link",
@@ -3473,7 +3473,7 @@
   },
   {
     "fileName": "AI_Factory_Link_49",
-    "description": "This confluence page will provide detail on how to access AI Factory",
+    "description": "This confluence page provies new AI factory users with a comprehensive overview of the platform's capabilities and how to get started.",
     "tags": "AI,AIFACTORY,LLM",
     "accessGroup": "public",
     "fileCategory": "Link",
@@ -3781,7 +3781,7 @@
   },
   {
     "fileName": "AI_Factory_Link_71",
-    "description": "This confluence page will provide detail on how to access AI Factory",
+    "description": "This document detail on  AI Factory",
     "tags": "VISION,IMAGE,AI",
     "accessGroup": "internal",
     "fileCategory": "Link",
@@ -3809,7 +3809,7 @@
   },
   {
     "fileName": "AI_Factory_Link_73",
-    "description": "This confluence page will provide detail on how to access AI Factory",
+    "description": "This confluence page will provide detail on  AI Factory and SCB platforms",
     "tags": "NLP,CHATBOT,LLM",
     "accessGroup": "private",
     "fileCategory": "Link",
@@ -3948,7 +3948,7 @@
     "tagVector": ""
   },
   {
-    "fileName": "AI_Factory_Link_83",
+    "fileName": "Data_Access_Permissions_AI_Factory",
     "description": "This Confluence page offers comprehensive instructions on accessing the AI Factory platform, including user permissions, navigation tips, and troubleshooting common access issues for a seamless onboarding experience.",
     "tags": "VISION,IMAGE,AI",
     "accessGroup": "public",
@@ -4130,7 +4130,7 @@
     "tagVector": ""
   },
   {
-    "fileName": "AI_Factory_Link_96",
+    "fileName": "Security_AI_Factory_Analytics",
     "description": "Access this Confluence page for a detailed walkthrough on how to securely access AI Factory, including user authentication, permissions, and troubleshooting common login issues.",
     "tags": "SECURITY,AI,THREAT",
     "accessGroup": "public",
@@ -4186,7 +4186,7 @@
     "tagVector": ""
   },
   {
-    "fileName": "AI_Factory_Link_100",
+    "fileName": "How to get access to AI Factory",
     "description": "Refer to this Confluence page for a complete guide on accessing AI Factory, covering user onboarding, access management, and solutions to frequently encountered access problems.",
     "tags": "ROBOTICS,AUTOMATION,AI",
     "accessGroup": "public",

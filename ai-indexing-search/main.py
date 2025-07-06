@@ -76,14 +76,15 @@ async def upload_document(fileMataData: FileMetadata = Depends(get_metadata),
 
 
 @app.get("/search_document/")
-def search_document_metadata(semantic_search_query: str = Query(..., description="Semantic search for document metadata")):
-     searchResults = document_search_service.search_semantic(semantic_search_query)
+def search_document_metadata(
+        semantic_search_query: str = Query(..., description="Semantic search for document metadata")):
+    searchResults = document_search_service.search_semantic(semantic_search_query)
 
-     # If searchResults is a JSON string, parse it to a Python list
-     if isinstance(searchResults, str):
-         searchResults = json.loads(searchResults)
+    # If searchResults is a JSON string, parse it to a Python list
+    if isinstance(searchResults, str):
+        searchResults = json.loads(searchResults)
 
-     return JSONResponse(content=searchResults)
+    return JSONResponse(content=searchResults)
 
 
 @app.get("/download/{file_id}")
@@ -138,16 +139,14 @@ def load_tags():
 
 @app.get("/load_documents/")
 def load_documents():
-    try:
-        document_indexing_service.load_data_documents("sampleDocument_updated.json")
-        return {"load_count": document_indexing_service.count_by_indexame(DOCUMENT_SEARCH_INDEX)}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    document_indexing_service.load_data_documents("sampleDocument_updated_1.json")
+    return {"load_count": document_indexing_service.count_by_indexame(DOCUMENT_SEARCH_INDEX)}
+
 
 @app.post("/load_sample_documents_more_than_100/")
 def load_documents():
-        document_indexing_service.load_data("sample_document_json.json")
-        return {"load_count": document_indexing_service.count_by_indexame(DOCUMENT_SEARCH_INDEX)}
+    document_indexing_service.load_data("sample_document_json.json")
+    return {"load_count": document_indexing_service.count_by_indexame(DOCUMENT_SEARCH_INDEX)}
 
 
 @app.get("/count_by_indexname/")
@@ -157,4 +156,3 @@ def count_by_indexname(index_name: str = Query(..., description="Name of the Ela
         return {"count": count}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-

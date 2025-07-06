@@ -4,6 +4,7 @@ import shutil
 import uuid
 from datetime import datetime
 
+from document_mappings import documentMetaData
 from pretrained_transfermer_model import PretrainedTransformerModel
 
 UPLOAD_DIR = "D:\\RAJKUMAR\\projects\\PYTHON_PROJECTS\\document-search-integration\\ai-indexing-search\\documents"
@@ -19,7 +20,7 @@ class DocumentIndexingService:
 
     def create_index(self, index_name):
         if not self.elasticsearch.indices.exists(index=index_name):
-            self.elasticsearch.indices.create(index=index_name)
+            self.elasticsearch.indices.create(index=index_name, mappings=documentMetaData)
             print(f"Index '{index_name}' created.")
         else:
             print(f"Index '{index_name}' already exists.")
@@ -116,7 +117,7 @@ class DocumentIndexingService:
                 "fileCategory": record["fileCategory"],
                 "link": record["link"],
                 "contact": record["contact"],
-                "uploadDate": record["uploadDate"],
+                "uploadDate": datetime.now(),
                 "descriptionVector":  record["descriptionVector"],
                 "nameVector": record["nameVector"],
                 "tagVector": record["tagVector"]
