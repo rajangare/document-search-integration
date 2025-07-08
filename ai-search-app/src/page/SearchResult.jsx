@@ -97,18 +97,33 @@ function SearchResult() {
     fetchSearchResults(value);
   };
 
-  // Pagination logic
-  const paginatedData = data.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  // Categorize data by category (case-insensitive, fallback to empty string)
+  const categorizedData = {
+    All: data,
+    Doc: data.filter(item => (item.category || '').toLowerCase() === 'doc'),
+    Application: data.filter(item => (item.category || '').toLowerCase() === 'application'),
+    Link: data.filter(item => (item.category || '').toLowerCase() === 'link'),
+    Project: data.filter(item => (item.category || '').toLowerCase() === 'project'),
+  };
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState('All');
+
+  // Pagination logic for each tab
+  const getPaginatedData = (category) => {
+    const arr = categorizedData[category] || [];
+    return arr.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Reset to page 1 when data/search changes
+  // Reset to page 1 when data/search or tab changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [data, searchText]);
+  }, [data, searchText, activeTab]);
 
   return (
     <div>
@@ -313,96 +328,193 @@ function SearchResult() {
 
       {/* Results section */}
       <div style={{ padding: '20px', position: 'relative' }}>
-        <Tabs defaultActiveKey="1" centered>
-        <TabPane tab="All" key="1">
-          <div style={{
-            background: '#f8fbff',
+        <Tabs
+          activeKey={activeTab}
+          onChange={key => setActiveTab(key)}
+          centered
+          tabBarGutter={24}
+          tabBarStyle={{
+            background: 'rgba(255,255,255,0.7)',
             borderRadius: 18,
-            boxShadow: '0 4px 24px rgba(79,140,255,0.10)',
+            boxShadow: '0 2px 12px rgba(79,140,255,0.07)',
+            padding: '8px 0',
+            marginBottom: 18,
+            fontWeight: 700,
+            fontSize: 18,
+            minHeight: 48,
+            display: 'flex',
+            justifyContent: 'center',
             border: '1.5px solid #e3eefd',
-            padding: '32px 32px 24px 32px',
-            marginBottom: 32,
-            minHeight: 200,
-          }}>
-            {loading && <div>Loading...</div>}
-            {error && <div style={{ color: 'red' }}>Error: {error}</div>}
-            {!loading && !error && data.length === 0 && <div>No results found.</div>}
-            {paginatedData.map((item, idx) => {
-              const index = (currentPage - 1) * pageSize + idx;
-              const words = (item.description || '').trim().split(/\s+/);
-              const isLong = words.length > 15;
-              const expanded = expandedStates[index] || false;
-              const displayedDescription =
-                isLong && !expanded
-                  ? words.slice(0, 15).join(" ") + "..."
-                  : item.description;
+          }}
+          moreIcon={null}
+        >
+          {['All', 'Doc', 'Application', 'Link', 'Project'].map(tab => {
+            // Add an icon for each tab for better look
+            const tabIcons = {
+              All: '📋',
+              Doc: '📄',
+              Application: '🖥️',
+              Link: '🔗',
+              Project: '📁',
+            };
+            const tabKey = tab;
+            const tabData = categorizedData[tabKey] || [];
+            const paginatedTabData = getPaginatedData(tabKey);
+            return (
+              <TabPane
+                tab={
+                  <span style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                    fontWeight: activeTab === tabKey ? 700 : 500,
+                    color: activeTab === tabKey ? '#4f8cff' : '#333',
+                    fontSize: 15,
+                    letterSpacing: 0.5,
+                    padding: '0 10px',
+                    borderRadius: 14,
+                    background: activeTab === tabKey ? 'linear-gradient(90deg, #e3eefd 0%, #f8fbff 100%)' : 'none',
+                    boxShadow: activeTab === tabKey ? '0 2px 8px rgba(79,140,255,0.08)' : 'none',
+                    transition: 'all 0.2s',
+                  }}>
+                    <span style={{ fontSize: 16 }}>{tabIcons[tabKey]}</span>
+                    {tab}
+                  </span>
+                }
+                key={tabKey}
+              >
+                <div style={{
+                  background: '#f8fbff',
+                  borderRadius: 18,
+                  boxShadow: '0 4px 24px rgba(79,140,255,0.10)',
+                  border: '1.5px solid #e3eefd',
+                  padding: '32px 32px 24px 32px',
+                  marginBottom: 32,
+                  minHeight: 200,
+                }}>
+                  {loading && <div>Loading...</div>}
+                  {error && <div style={{ color: 'red' }}>Error: {error}</div>}
+                  {!loading && !error && tabData.length === 0 && <div>No results found.</div>}
+                  {paginatedTabData.map((item, idx) => {
+                    const index = (currentPage - 1) * pageSize + idx;
+                    const words = (item.description || '').trim().split(/\s+/);
+                    const isLong = words.length > 15;
+                    const expanded = expandedStates[index] || false;
+                    const displayedDescription =
+                      isLong && !expanded
+                        ? words.slice(0, 15).join(" ") + "..."
+                        : item.description;
 
-              return (
-                <Card key={index} style={{ marginBottom: "20px", borderRadius: 14, boxShadow: '0 2px 12px rgba(79,140,255,0.07)', border: '1.5px solid #dbeafe' }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Title level={5} style={{ margin: 0 }}>
-                      {item.name}
-                    </Title>
-                    <Tag color={tagColors[item.category] || "default"}>
-                      {item.category?.toUpperCase?.() || ''}
-                    </Tag>
-                  </div>
+                    return (
+                      <Card key={index} style={{ marginBottom: "20px", borderRadius: 14, boxShadow: '0 2px 12px rgba(79,140,255,0.07)', border: '1.5px solid #dbeafe' }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Title level={5} style={{ margin: 0 }}>
+                            {(() => {
+                              if (!item.name) return '';
+                              // Remove underscores and file extension
+                              const nameWithoutUnderscores = item.name.replace(/_/g, ' ');
+                              const nameWithoutExt = nameWithoutUnderscores.replace(/\.[^/.]+$/, '');
+                              return nameWithoutExt;
+                            })()}
+                          </Title>
+                          <Tag color={tagColors[item.category] || "default"}>
+                            {item.category?.toUpperCase?.() || ''}
+                          </Tag>
+                        </div>
 
-                  <Paragraph style={{ marginTop: 8 }}>
-                    {displayedDescription}
-                    {isLong && (
-                      <span
-                        onClick={() => toggleExpanded(index)}
+                        <Paragraph style={{ marginTop: 8 }}>
+                          {displayedDescription}
+                          {isLong && (
+                            <span
+                              onClick={() => toggleExpanded(index)}
+                              style={{
+                                color: "#1890ff",
+                                cursor: "pointer",
+                                marginLeft: 8,
+                              }}
+                            >
+                              {expanded ? "Show less" : "Read more"}
+                            </span>
+                          )}
+                        </Paragraph>
+
+                        <Paragraph>
+                          {(item.Link && item.Link !== 'N/A') ? (
+                              <AntLink href={item.Link} target="_blank">
+                            {item.Link}
+                          </AntLink>
+                            ) : (
+                              <AntLink href={item.filename || '#'} target="_blank">
+                            {item.name}
+                              </AntLink>
+                            )} 
+
+                          <br />
+                          Contact: {item.contact || 'N/A'}
+                        </Paragraph>
+                      </Card>
+                    );
+                  })}
+                  {!loading && !error && tabData.length > pageSize && (
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      marginTop: 32,
+                      background: 'rgba(255,255,255,0.85)',
+                      borderRadius: 16,
+                      boxShadow: '0 2px 12px rgba(79,140,255,0.08)',
+                      padding: '12px 32px',
+                      border: '1.5px solid #e3eefd',
+                      width: 'fit-content',
+                      marginLeft: 'auto',
+                      marginRight: 'auto',
+                    }}>
+                      <Pagination
+                        current={currentPage}
+                        pageSize={pageSize}
+                        total={tabData.length}
+                        onChange={handlePageChange}
+                        showSizeChanger={false}
+                        showQuickJumper={false}
                         style={{
-                          color: "#1890ff",
-                          cursor: "pointer",
-                          marginLeft: 8,
+                          fontWeight: 600,
+                          fontSize: 16,
+                          color: '#4f8cff',
                         }}
-                      >
-                        {expanded ? "Show less" : "Read more"}
-                      </span>
-                    )}
-                  </Paragraph>
-
-                  <Paragraph>
-                    <AntLink href={item.Link} target="_blank">
-                      {item.Link}
-                    </AntLink>
-                    <br />
-                    Contact: {item.contact || 'N/A'}
-                  </Paragraph>
-                </Card>
-              );
-            })}
-            {!loading && !error && data.length > pageSize && (
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
-                <Pagination
-                  current={currentPage}
-                  pageSize={pageSize}
-                  total={data.length}
-                  onChange={handlePageChange}
-                  showSizeChanger={false}
-                  showQuickJumper={false}
-                />
-              </div>
-            )}
-          </div>
-        </TabPane>
-        <TabPane tab="Doc" key="2">
-        </TabPane>
-        <TabPane tab="Application" key="3">
-        </TabPane>
-        <TabPane tab="Link" key="4">
-        </TabPane>
-        <TabPane tab="Project" key="5">
-        </TabPane>
-      </Tabs>
+                        itemRender={(page, type, originalElement) => {
+                          if (type === 'prev') {
+                            return <span style={{ color: '#38cfa6', fontWeight: 700, fontSize: 18, padding: '0 8px' }}>← Prev</span>;
+                          }
+                          if (type === 'next') {
+                            return <span style={{ color: '#4f8cff', fontWeight: 700, fontSize: 18, padding: '0 8px' }}>Next →</span>;
+                          }
+                          return <span style={{
+                            color: currentPage === page ? '#fff' : '#4f8cff',
+                            background: currentPage === page ? 'linear-gradient(90deg, #4f8cff 0%, #38cfa6 100%)' : 'none',
+                            borderRadius: 8,
+                            padding: '2px 10px',
+                            fontWeight: currentPage === page ? 800 : 600,
+                            fontSize: 16,
+                            margin: '0 2px',
+                            transition: 'all 0.2s',
+                            boxShadow: currentPage === page ? '0 2px 8px rgba(79,140,255,0.10)' : 'none',
+                            border: currentPage === page ? '1.5px solid #38cfa6' : '1.5px solid transparent',
+                          }}>{page}</span>;
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </TabPane>
+            );
+          })}
+        </Tabs>
         <UploadModal></UploadModal>
       </div>
       {/* Footer */}
